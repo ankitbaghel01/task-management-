@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & Drop API</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="drag.js" defer></script>
+    <script src="todo.js" defer></script>
+    
+</head>
+<body>
+    <div class="board">
+        <form id="todo-form">
+            <input type="text" placeholder="New TODO..." id="todoinput" />
+            <input type="text" placeholder="Description..." id="descriptioninput" />
+            <button type="submit" id="add-button">Add +</button>
+        </form>
+
+        <div class="lanes" id="task-list">
+            <div class="swim-lane" id="todo-lane">
+                <h3 class="heading">TODO</h3>
+                <!-- <details class="task" draggable="true">
+                   <summary>Epcot Center</summary>
+                    <p class="description">Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
+                    <button class="edit-button">Edit</button>
+                    <button class="delete-button">Delete</button> 
+                </details> -->
+            </div>
+
+            <div class="swim-lane">
+                <h3 class="heading">Doing</h3>
+                <!-- <details class="task" draggable="true">
+                     <summary>Epcot Center</summary>
+                    <p class="description">Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
+                    <button class="edit-button">Edit</button>
+                    <button class="delete-button">Delete</button>
+                </details> -->
+            </div>
+
+            <div class="swim-lane">
+                <h3 class="heading">Done</h3>
+                <!-- <details class="task" draggable="true">
+                  <summary>Epcot Center</summary>
+                    <p class="description">Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
+                    <button class="edit-button">Edit</button>
+                    <button class="delete-button">Delete</button>
+                </details> -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-database.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    
+
+<!-- <script src="conection.js"></script> -->
+
+    <script>
+
+        // Get references to elements
+const form = document.getElementById("todo-form");
+const input = document.getElementById("todoinput");
+const descriptionInput = document.getElementById("descriptioninput");
+const todoLane = document.getElementById("todo-lane");
+
+// Add a submit event listener to the form
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = input.value;
+  const description = descriptionInput.value;
+
+  if (!title) return;
+
+  const newTask = createTaskElement(title, description);
+
+  // Append the new task to the TODO lane
+  todoLane.appendChild(newTask);
+
+  // Clear the input fields
+  input.value = "";
+  descriptionInput.value = "";
+});
+
+// Function to create a new task element
+function createTaskElement(title, description) {
+  const newTask = document.createElement("details");
+  newTask.classList.add("task");
+  newTask.setAttribute("draggable", "true");
+
+  const summary = document.createElement("summary");
+  summary.innerText = title;
+
+  const descriptionPara = document.createElement("p");
+  descriptionPara.classList.add("description");
+  descriptionPara.innerText = description || "No description";
+
+  const editButton = document.createElement("button");
+  editButton.classList.add("edit-button");
+  editButton.innerText = "Edit";
+
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("delete-button");
+  deleteButton.innerText = "Delete";
+
+  // Add event listeners for drag-and-drop
+  newTask.addEventListener("dragstart", () => {
+    newTask.classList.add("is-dragging");
+  });
+
+  newTask.addEventListener("dragend", () => {
+    newTask.classList.remove("is-dragging");
+  });
+
+  // Add event listeners for delete and edit buttons
+  deleteButton.addEventListener("click", () => {
+    newTask.remove();
+  });
+
+  editButton.addEventListener("click", () => {
+        const newTitle = prompt("Edit task title:", title);
+        if (newTitle !== null) {
+            title = newTitle;
+            summary.innerText = title;
+        }
+
+        const newDescription = prompt("Edit task description:", descriptionPara.innerText);
+        if (newDescription !== null) {
+            descriptionPara.innerText = newDescription;
+        }
+    });
+
+
+  newTask.appendChild(summary);
+  newTask.appendChild(descriptionPara);
+  newTask.appendChild(editButton);
+  newTask.appendChild(deleteButton);
+
+  return newTask;
+}
+
+    </script>
+</body>
+</html>
